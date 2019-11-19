@@ -1,28 +1,28 @@
-# Scheduling
+# Scheduling 5%
 
 **Table of contents**
 
-- [Labels & Selectors](#labels--selectors)
-  - [Pod](#pod)
-  - [ReplicaSet](#replicaset)
-  - [Service](#service)
-  - [Deployement](#deployement)
-- [Taints & Tolerations](#taints--tolerations)
-  - [Tainting nodes with kubectl](#tainting-nodes-with-kubectl)
-  - [Declaring tolerations on pods](#declaring-tolerations-on-pods)
-- [Affinity and Anti-Affinity](#affinity-and-anti-affinity)
-  - [Pod affinity](#pod-affinity)
-  - [Deployment affinity](#deployment-affinity)
-- [Resource requirements](#resource-requirements)
-- [Daemon Sets](#daemon-sets)
-- [Static Pods](#static-pods)
-- [Multiple schedulers and configuration](#multiple-schedulers-and-configuration)
+- [1. Labels & Selectors](#1-labels--selectors)
+  - [1.1. Pod](#11-pod)
+  - [1.2. ReplicaSet](#12-replicaset)
+  - [1.3. Service](#13-service)
+  - [1.4. Deployement](#14-deployement)
+- [2. Taints & Tolerations](#2-taints--tolerations)
+  - [2.1. Tainting nodes with kubectl](#21-tainting-nodes-with-kubectl)
+  - [2.2. Declaring tolerations on pods](#22-declaring-tolerations-on-pods)
+- [3. Affinity and Anti-Affinity](#3-affinity-and-anti-affinity)
+  - [3.1 Pod affinity](#31-pod-affinity)
+  - [3.2. Deployment affinity](#32-deployment-affinity)
+- [4. Resource requirements](#4-resource-requirements)
+- [5. Daemon Sets](#5-daemon-sets)
+- [6. Static Pods](#6-static-pods)
+- [6. Multiple schedulers and configuration](#6-multiple-schedulers-and-configuration)
   - [Scheduling log and events](#scheduling-log-and-events)
-- [Manual scheduling](#manual-scheduling)
+- [7. Manual scheduling](#7-manual-scheduling)
 
 ---
 
-## Labels & Selectors
+## 1. Labels & Selectors
 
 To get a list of pods based on a particular set of labels:
 
@@ -30,7 +30,7 @@ To get a list of pods based on a particular set of labels:
 kubectl get pods --selector key=value
 ```
 
-### Pod
+### 1.1. Pod
 
 ```yaml
 apiVersion: v1
@@ -47,7 +47,7 @@ spec:
       image: nginx
 ```
 
-### ReplicaSet
+### 1.2. ReplicaSet
 
 ```yaml
 apiVersion: apps/v1
@@ -75,7 +75,7 @@ spec:
         image: nginx
 ```
 
-### Service
+### 1.3. Service
 
 ```yaml
 apiVersion: apps/v1
@@ -93,7 +93,7 @@ spec:
       targetPort: 80
 ```
 
-### Deployement
+### 1.4. Deployement
 
 ```yaml
 apiVersion: apps/v1
@@ -124,11 +124,11 @@ spec:
 
 ---
 
-## Taints & Tolerations
+## 2. Taints & Tolerations
 
 **Taints** are for nodes, **tolerations** are for pods. Tainting a node prevents pods from being scheduled on that node, unless the pod has a matching toleration for that taint.
 
-### Tainting nodes with kubectl
+### 2.1. Tainting nodes with kubectl
 
 ```bash
 kubectl taint node node01 tier=frontend:NoSchedule
@@ -142,7 +142,7 @@ Tainting effects on pods without a matching toleration:
 
 - `NoExec` - As NoSchedule but evicts any existing pods already scheduled without a matching toleration.
 
-### Declaring tolerations on pods
+### 2.2. Declaring tolerations on pods
 
 Important: Adding a toleration to a pod only allows the pod to be scheduled on a node with a matching taint. It **does not guarantee** that the pod won't be scheduled on a untainted node.
 
@@ -170,7 +170,7 @@ spec:
 
 ---
 
-## Affinity and Anti-Affinity
+## 3. Affinity and Anti-Affinity
 
 Affinity is used as a node selection mechanism for pods. It allows a pod to specify a particular preference (affinity) towards certain nodes. The affinity mechanism uses labels set on nodes.
 
@@ -186,7 +186,7 @@ Affinity types:
 - `requiredDuringSchedulingIgnoredDuringExecution`
 - `preferredDuringSchedulingIgnoredDuringExecution`
 
-### Pod affinity
+### 3.1 Pod affinity
 
 Afinity is declared in pod definition under `spec.affinity`
 
@@ -212,7 +212,7 @@ spec:
                 values: large
 ```
 
-### Deployment affinity
+### 3.2. Deployment affinity
 
 Afinity is declared in pod definition template under `spec.affinity`
 
@@ -253,7 +253,7 @@ spec:
 
 ---
 
-## Resource requirements
+## 4. Resource requirements
 
 Resource requirements are declared for each container under `container[].resources`. Default limits are 512Mi and 1 vCPU.
 
@@ -282,7 +282,7 @@ spec:
 
 ---
 
-## Daemon Sets
+## 5. Daemon Sets
 
 Ensure that a single copy of a particular pod is deployed on _every_ node in the cluster. Definition is very similar to ReplicaSets.
 
@@ -310,7 +310,7 @@ spec:
           image: logging-image
 ```
 
-## Static Pods
+## 6. Static Pods
 
 Created only by the _kubelet_ from local manifest files. Read-only mirror objects are created on the API Server which can not be modified with kubectl or API calls. These objects can only be modified by editing the local manifests on each pod.
 
@@ -322,7 +322,7 @@ To find the location of local manifests folder, ssh into each node:
 
 Kubelet is watching the local folder for new pod manifests or changes to existing ones. Pods will only be deployed on the same node.
 
-## Multiple schedulers and configuration
+## 6. Multiple schedulers and configuration
 
 Multiple schedulers can be installed on the master node. With `kubeadm` shedullers are deployed as static pods on the master node. An additional scheduller need to specify the `--scheduler-name=additional-scheduler` property and use a different port than the `default-scheduler`.
 
@@ -359,7 +359,7 @@ Scheduling events are available by quering the API for events
 kubectl get events
 ```
 
-## Manual scheduling
+## 7. Manual scheduling
 
 See: [k8s.io - Assigning Pods to Nodes](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/)
 
