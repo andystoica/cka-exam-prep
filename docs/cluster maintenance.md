@@ -24,15 +24,15 @@ Upgrade the **MASTER** Node.
 
 ```bash
 # upgrade the kubeadm tool and kubectl
-apt-get upgrade -y kubeadm=1.12.0-00
-apt-get upgrade -y kubectl=1.12.0-00
+apt-get install -y kubeadm=1.12.0-00
+apt-get install -y kubectl=1.12.0-00
 
 # use kubeadm to upgrade the control plane components running as pods
 # (apiserver, controller-manager, sheduler, kube-proxy)
 kubeadm upgrade apply v1.12.0
 
 # manualy upgrade and restart kubelet
-apt-get upgrade -y kubelet=1.12.0-00
+apt-get install -y kubelet=1.12.0-00
 systemctl restart kubelet
 
 # verify the upgrade
@@ -44,11 +44,11 @@ Upgrade each of the **WORKER** Nodes
 
 ```bash
 # (MASTER) drain and cordon the node
-kubectl drain node01
+kubectl drain node01 --ignore-daemonsets
 
 # (WORKER) manually upgrade the kubeadm tool, kublet and reload configuration
-apt-get upgrade -y kubeadm=1.12.0-00
-apt-get upgrade -y kubelet=1.12.0-00
+apt-get install -y kubeadm=1.12.0-00
+apt-get install -y kubelet=1.12.0-00
 kubeadm upgrade node config --kubelet-version v1.12.0
 systemctl restart kubelet
 
@@ -63,7 +63,7 @@ The process involves relocating the running pods onto different nodes and cordon
 
 ```bash
 # cordon the node and redistribute running pods to other nodes
-kubectl drain node02
+kubectl drain node02 --ignore-daemonsets
 # perform maintenance tasks
 # ...
 # bring the node back to service
