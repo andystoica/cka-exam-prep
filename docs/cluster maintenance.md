@@ -77,3 +77,5 @@ kubectl cordon node01
 ```
 
 ## 3. Backup and restore methodologies
+
+Cluster can be backed up trough API calls using a third party utility or by backing up the etcd cluster.
